@@ -1,29 +1,41 @@
 ﻿# AI Analysis Design
 
 ## Goal
-Make the analysis genuinely model-driven, plan-specific and explainable while retaining a stable output contract for the UI.
+Produce genuinely model-driven, plan-specific, explainable analysis while preserving a stable UI contract.
 
-## Input
-The analysis layer should receive:
+## Input context
+The AI layer should receive:
 - plan description
-- target user/customer
-- budget
+- target customer/user
 - deadline
+- budget
 - team/owner
 - dependencies
 - constraints
 - success criteria
 - existing safeguards
-- supporting evidence context when available
+- available evidence context
 
 ## Output contract
 
 ```json
 {
-  "customer": {"findings": [], "confidence": 0},
-  "operations": {"findings": [], "confidence": 0},
-  "finance": {"findings": [], "confidence": 0},
-  "risk": {"findings": [], "confidence": 0},
+  "customer": {
+    "findings": [],
+    "confidence": 0
+  },
+  "operations": {
+    "findings": [],
+    "confidence": 0
+  },
+  "finance": {
+    "findings": [],
+    "confidence": 0
+  },
+  "risk": {
+    "findings": [],
+    "confidence": 0
+  },
   "contradictions": [],
   "failureChains": [],
   "safeguards": [],
@@ -36,23 +48,24 @@ The analysis layer should receive:
 ## Perspective requirements
 
 ### Customer
-Adoption, trust, switching friction, unmet expectations, support, usability.
+Adoption, trust, support burden, switching friction, expectations, usability, customer harm.
 
 ### Operations
-Capacity, dependencies, ownership, rollout, rollback, staffing, service continuity.
+Capacity, dependencies, staffing, ownership, rollout, rollback, service continuity.
 
 ### Finance
-Budget realism, cost growth, ROI, hidden cost, unit economics, downside exposure.
+Budget realism, hidden costs, ROI, unit economics, downside exposure, emergency cost.
 
 ### Risk
-Security, privacy, compliance, reputation, critical operational or strategic risks.
+Security, privacy, compliance, reputation, critical blockers, failure containment.
 
-## Prompt-quality requirements
-- Use the user's actual facts and constraints.
-- Avoid repeating the same wording across perspectives.
-- Surface at least one non-obvious context-specific failure mode.
-- Clearly distinguish observed fact, inference and unresolved assumption.
-- Return structured output even when evidence is weak.
+## Reasoning requirements
+- use the user's actual facts and constraints
+- avoid template repetition across perspectives
+- surface at least one non-obvious context-specific failure mode
+- separate fact, inference and unresolved assumption
+- generate safeguards that map to specific failure points
+- return structured output reliably
 
 ## Fallback
-A deterministic fallback may preserve demo continuity, but it should not be presented as equivalent to the primary AI reasoning path.
+If model access fails, the application may use a deterministic fallback so the workflow remains usable. Fallback output should preserve the same UI schema where practical.

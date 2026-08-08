@@ -1,17 +1,18 @@
 ﻿# Security Policy
 
-## Scope
+FailureTwin AI may process business-sensitive planning information.
 
-FailureTwin AI processes planning information that may contain business-sensitive context. Hackathon builds should avoid collecting secrets or unnecessary personal information.
-
-## Repository security
-
-- Never commit `.env` files, API keys, tokens, service-role keys, or private credentials.
-- Keep `.env.example` values non-secret.
-- Review uploaded evidence for privacy and retention concerns before adding persistent storage.
-- Use least-privilege access for external services.
-- Treat public demo data as non-confidential.
+## Repository rules
+- never commit `.env` files
+- never commit API keys, tokens, service-role keys or private credentials
+- keep example configuration non-secret
+- use least-privilege service access
+- avoid unnecessary persistence of uploaded evidence
+- do not use confidential customer/business data in public demos
 
 ## Reporting
-
-For hackathon-stage security findings, use private team communication and create a sanitized GitHub issue when appropriate. Do not publish credentials or exploitable secrets in issues.
+For hackathon-stage security findings:
+1. notify the team privately
+2. rotate exposed credentials immediately if applicable
+3. create a sanitized GitHub issue when safe
+4. do not publish exploitable secrets in issues or PR comments

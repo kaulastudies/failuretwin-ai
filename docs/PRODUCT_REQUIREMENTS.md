@@ -7,48 +7,53 @@ FailureTwin AI is an AI pre-mortem decision workspace that stress-tests a plan b
 - founders
 - product managers
 - operations leads
-- teams evaluating launches, automations and business decisions
+- startup and AI-automation teams
+- teams evaluating launches, automations, migrations, and high-impact decisions
 
 ## Required user journey
-1. Describe the plan.
-2. Add important context: budget, deadline, target user and constraints.
-3. Run analysis across Customer, Operations, Finance and Risk.
-4. Review contradictions, evidence gaps and connected failure chains.
-5. Review and accept/reject safeguards.
-6. Recalculate readiness.
-7. Generate Proceed / Revise / Stop recommendation.
-8. Produce a concise printable decision brief.
+1. Describe the plan in freeform text.
+2. Add management context such as target user, budget, deadline, dependencies and constraints.
+3. Run Customer, Operations, Finance and Risk analysis.
+4. Review contradictions and evidence gaps.
+5. Review one or more connected failure chains.
+6. Review and accept/reject safeguards.
+7. Recalculate readiness without double counting.
+8. Produce a Proceed / Revise / Stop recommendation.
+9. Generate a concise printable decision brief.
 
 ## Functional requirements
 
-### Plan input
-- freeform plan description
-- optional structured context
-- arbitrary judge/user plans must work
+### Freeform plan input
+The product must accept plans that are not pre-written demo scenarios.
 
-### Analysis
-Each perspective must have distinct concerns and produce plan-specific observations.
+### Perspective-specific analysis
+Each perspective must contribute meaningfully different reasoning.
 
-### Failure chain
-The product should connect risks causally instead of presenting an unstructured list.
+### Failure-chain synthesis
+Individual weaknesses should be connected causally instead of presented as a flat risk list.
 
 ### Safeguards
-Safeguards should be prioritized and should explain why they apply to the specific plan.
+Safeguards should:
+- reference the actual plan
+- explain why they matter
+- identify the failure-chain point they interrupt
+- have a stable effect on readiness
 
-### State
-Navigation between workflow stages must preserve entered and derived data.
+### State persistence
+Normal navigation must preserve plan context, analysis results, safeguard decisions and derived state.
 
 ### Final brief
-The final artifact must summarize:
+The final artifact should summarize:
 - plan
-- primary risks
-- failure chain
+- most important risks
+- strongest failure chain
 - accepted safeguards
 - unresolved questions
 - readiness
-- final decision
+- final recommendation
 
 ## Stretch scope
-- supporting evidence/file attachments
-- advanced file text extraction
+- supporting evidence/file attachment
+- evidence text extraction
 - richer visual failure map
+- durable cross-session persistence

@@ -1,22 +1,30 @@
 ﻿# Judging Alignment
 
 ## Application of Technology
-Evidence to demonstrate:
-- freeform model-driven analysis
-- plan-specific reasoning
-- differentiated analytical perspectives
-- structured AI output driving product behavior
-- graceful fallback rather than a rule-only primary experience
+Demonstrate:
+- model-driven freeform reasoning
+- plan-specific context use
+- differentiated perspectives
+- structured model output driving product behavior
+- graceful fallback rather than rule-only intelligence
 
 ## Presentation
-Evidence to demonstrate:
+Demonstrate:
 - complete workflow
-- readable risk/failure-chain UX
-- concise demo
+- readable failure chain
+- safeguard intervention
+- readiness change
 - polished decision brief
+- concise demo
 
 ## Business Value
-FailureTwin helps teams identify expensive failure modes before launch and convert them into actionable safeguards.
+FailureTwin helps teams expose expensive failure modes before execution and translate them into practical mitigations.
 
 ## Originality
-The product combines pre-mortem reasoning, multiple business perspectives, causal failure chains, intervention safeguards and a decision artifact in one workflow.
+FailureTwin combines:
+- pre-mortem reasoning
+- multiple business lenses
+- causal failure chains
+- intervention safeguards
+- readiness effects
+- a decision artifact

@@ -2,7 +2,7 @@
 name: Bug report
 about: Report a reproducible FailureTwin defect
 title: "[Bug] "
-labels: ""
+labels: "bug"
 assignees: ""
 ---
 
@@ -20,12 +20,12 @@ assignees: ""
 ## Environment
 - Browser:
 - Device:
-- Public/preview URL:
+- Preview/Public URL:
 
 ## Evidence
 Screenshots, recording, console output, or relevant notes.
 
 ## Acceptance criteria
-- [ ] Root cause understood
-- [ ] Fix validated
-- [ ] Regression check completed
+- [ ] root cause understood
+- [ ] fix validated
+- [ ] regression check completed

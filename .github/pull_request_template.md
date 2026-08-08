@@ -8,13 +8,14 @@ Closes #
 ## Why
 
 ## Validation
-- [ ] Manual workflow check
-- [ ] Regression check
-- [ ] Screenshot/evidence attached where relevant
+- [ ] manual workflow check
+- [ ] regression check
+- [ ] screenshot/evidence attached where relevant
 
 ## Risks / rollback
 
 ## Checklist
-- [ ] No secrets committed
-- [ ] Documentation updated if behavior changed
-- [ ] Change is focused and reviewable
+- [ ] no secrets committed
+- [ ] documentation updated if behavior changed
+- [ ] change is focused and reviewable
+- [ ] contribution description reflects work actually performed

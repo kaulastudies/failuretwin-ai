@@ -1,25 +1,27 @@
 ﻿# Scoring Model
 
 ## Purpose
-Readiness scoring helps users understand whether accepted safeguards materially improve the plan.
+Readiness scoring communicates whether safeguards materially improve the plan.
 
 ## Principles
-- deterministic and explainable
-- no double-counting when the same safeguard is accepted repeatedly
-- visible reason for every score change
-- score supports the final decision but does not replace qualitative reasoning
+- explainable
+- stable
+- deterministic once the analysis result exists
+- no double counting
+- visible reason for each score movement
+- qualitative risk still matters; score is not the sole decision mechanism
 
-## Suggested decision bands
-The exact implementation must match application behavior.
+## Decision interpretation
+- **Proceed** — risks are bounded and critical safeguards are in place
+- **Revise** — important gaps remain but can reasonably be addressed
+- **Stop** — a critical blocker or feasibility failure dominates the plan
 
-- **Proceed**: risks are bounded and critical safeguards are in place
-- **Revise**: important gaps remain but can reasonably be addressed
-- **Stop**: critical unresolved risk or feasibility failure dominates the plan
-
-## Verification
+## Regression cases
 Tests should explicitly cover:
 - accept safeguard once
+- repeat accept action
 - reject safeguard
-- accept â†’ reject â†’ accept
-- repeated clicks
-- multiple safeguards affecting the same chain
+- accept → reject → accept
+- several safeguards affecting one failure chain
+- navigation away and back
+- reload/persistence behavior where supported

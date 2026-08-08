@@ -2,7 +2,7 @@
 name: Feature / improvement
 about: Propose a scoped product improvement
 title: "[Feature] "
-labels: ""
+labels: "enhancement"
 assignees: ""
 ---
 

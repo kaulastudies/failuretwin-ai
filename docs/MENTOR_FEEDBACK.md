@@ -1,21 +1,21 @@
 ﻿# Mentor Feedback
 
-## External mentor review
-
-The mentor response was positive about:
+## What the mentor liked
+The external mentor review positively highlighted:
 - the pre-mortem concept
 - the FailureTwin framing/name
 - the four-perspective structure
-- the practical Proceed / Revise / Stop decision artifact
+- the practical Proceed / Revise / Stop artifact
 
-The main concern was that a deterministic analysis mode may appear rule-based under an AI-integration judging criterion.
+## Main concern
+A deterministic analysis mode could be perceived as rule-based under an AI-model-integration judging criterion.
 
-## Priorities derived from the feedback
-1. Make at least the primary analysis path genuinely model-driven.
+## Priorities derived from the review
+1. Make the primary analysis genuinely model-driven.
 2. Support arbitrary freeform plans.
 3. Surface non-obvious context-specific failure modes.
 4. Keep the demo concise and end-to-end.
-5. Polish the printable decision brief as the strongest final artifact.
+5. Polish the printable decision brief.
 
 ## Product response
-The deterministic engine is treated as a resilience fallback, while model-driven structured analysis is the primary product direction.
+The deterministic engine is positioned as a resilience fallback while model-driven structured reasoning is the target primary experience.
