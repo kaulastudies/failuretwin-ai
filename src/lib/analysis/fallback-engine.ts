@@ -1,7 +1,7 @@
 import type { Simulation, AnalysisResult, AgentFinding, FailureNode, Safeguard, DecisionBrief, AnalysisEngine } from "./types";
 
 export class FallbackEngine implements AnalysisEngine {
-  analyze(simulation: Simulation): AnalysisResult {
+  async analyze(simulation: Simulation): Promise<AnalysisResult> {
     const findings = this.generateFindings(simulation);
     const nodes = this.generateFailureNodes(simulation, findings);
     const safeguards = this.generateSafeguards(nodes);
