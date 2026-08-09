@@ -126,7 +126,7 @@ export default function DecisionRoom() {
   ];
 
   const scoreColor = () => {
-    if (localBrief.readinessScore >= 70) return "text-go";
+    if (localBrief.readinessScore >= 75) return "text-go";
     if (localBrief.readinessScore >= 45) return "text-revise";
     return "text-stop";
   };
@@ -208,7 +208,7 @@ export default function DecisionRoom() {
           <div className="flex items-center justify-center gap-6">
             <div className="text-center">
               <div className="text-sm text-muted-foreground">Initial</div>
-              <div className={cn("text-2xl font-bold", initialScore >= 70 ? "text-go" : initialScore >= 45 ? "text-revise" : "text-stop")}>{initialScore}</div>
+              <div className={cn("text-2xl font-bold", initialScore >= 75 ? "text-go" : initialScore >= 45 ? "text-revise" : "text-stop")}>{initialScore}</div>
             </div>
             <ArrowRight className="h-5 w-5 text-muted-foreground" />
             <div className="text-center">

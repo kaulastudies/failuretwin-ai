@@ -21,7 +21,7 @@ function AgentCard({ finding }: { finding: AgentFinding }) {
   const Icon = meta.icon;
 
   const getScoreColor = (score: number) => {
-    if (score >= 70) return "text-go";
+    if (score >= 75) return "text-go";
     if (score >= 45) return "text-revise";
     return "text-stop";
   };
@@ -29,7 +29,7 @@ function AgentCard({ finding }: { finding: AgentFinding }) {
   const getCircularGradient = (score: number) => {
     const pct = Math.min(100, Math.max(0, score));
     const angle = (pct / 100) * 360;
-    if (pct >= 70) return `conic-gradient(var(--color-go) ${angle}deg, var(--color-secondary) ${angle}deg)`;
+    if (pct >= 75) return `conic-gradient(var(--color-go) ${angle}deg, var(--color-secondary) ${angle}deg)`;
     if (pct >= 45) return `conic-gradient(var(--color-revise) ${angle}deg, var(--color-secondary) ${angle}deg)`;
     return `conic-gradient(var(--color-stop) ${angle}deg, var(--color-secondary) ${angle}deg)`;
   };
@@ -282,7 +282,7 @@ export default function AnalysisRoom() {
       {/* Navigation */}
       <div className="flex justify-between">
         <Button variant="outline" onClick={() => navigate("/follow-up")}>
-          Back to Follow-up
+          Back to Management Plan
         </Button>
         <Button onClick={() => navigate("/failure-chain")}>
           View Failure Chains

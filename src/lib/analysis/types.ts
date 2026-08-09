@@ -76,5 +76,5 @@ export interface AnalysisResult {
 }
 
 export interface AnalysisEngine {
-  analyze(simulation: Simulation): AnalysisResult;
+  analyze(simulation: Simulation): AnalysisResult | Promise<AnalysisResult>;
 }

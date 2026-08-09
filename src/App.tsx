@@ -5,7 +5,7 @@ import { ErrorBoundary } from "@/components/shared/error-boundary";
 
 import Dashboard from "@/pages/dashboard";
 import NewSimulation from "@/pages/new-simulation";
-import FollowUpRoom from "@/pages/follow-up-room";
+import ManagementPlanRoom from "@/pages/follow-up-room";
 import AnalysisRoom from "@/pages/analysis-room";
 import FailureChainRoom from "@/pages/failure-chain-room";
 import DecisionRoom from "@/pages/decision-room";
@@ -21,7 +21,7 @@ const router = createBrowserRouter([
     children: [
       { path: "/", element: <Dashboard /> },
       { path: "/new", element: <NewSimulation /> },
-      { path: "/follow-up", element: <FollowUpRoom /> },
+      { path: "/follow-up", element: <ManagementPlanRoom /> },
       { path: "/analysis", element: <AnalysisRoom /> },
       { path: "/failure-chain", element: <FailureChainRoom /> },
       { path: "/decision", element: <DecisionRoom /> },

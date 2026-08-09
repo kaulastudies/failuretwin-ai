@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 const steps = [
   { path: "/", label: "Dashboard", step: 1 },
   { path: "/new", label: "New", step: 2 },
-  { path: "/follow-up", label: "Follow-up", step: 3 },
+  { path: "/follow-up", label: "Management Plan", step: 3 },
   { path: "/analysis", label: "Analysis", step: 4 },
   { path: "/failure-chain", label: "Chain", step: 5 },
   { path: "/decision", label: "Decision", step: 6 },

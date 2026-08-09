@@ -1,13 +1,13 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, ArrowRight, ChevronDown, ChevronUp, AlertTriangle, Lightbulb, HelpCircle, Target, Shield } from "lucide-react";
+import { ArrowLeft, ArrowRight, ChevronDown, ChevronUp, AlertTriangle, Lightbulb, HelpCircle, Target, Shield, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useSimulation } from "@/context/simulation-context";
 import { cn } from "@/lib/utils";
-import type { FailureNode } from "@/lib/analysis/types";
+import type { FailureNode, Safeguard } from "@/lib/analysis/types";
 
 const nodeStyles: Record<string, { bg: string; border: string; icon: typeof AlertTriangle; label: string }> = {
   assumption: { bg: "bg-intel-bg", border: "border-intel", icon: Target, label: "Assumption" },
@@ -17,7 +17,7 @@ const nodeStyles: Record<string, { bg: string; border: string; icon: typeof Aler
   "evidence-gap": { bg: "bg-secondary", border: "border-muted-foreground", icon: HelpCircle, label: "Evidence Gap" },
 };
 
-function FailureNodeCard({ node, expanded, onToggle }: { node: FailureNode; expanded: boolean; onToggle: () => void }) {
+function FailureNodeCard({ node, expanded, onToggle, depth }: { node: FailureNode; expanded: boolean; onToggle: () => void; depth: number }) {
   const style = nodeStyles[node.type];
   const NodeIcon = style.icon;
 
@@ -42,7 +42,7 @@ function FailureNodeCard({ node, expanded, onToggle }: { node: FailureNode; expa
   };
 
   return (
-    <div className="relative">
+    <div className={cn("relative", depth > 0 && "ml-3 md:ml-4 border-l-2 border-border pl-3 md:pl-4")}>
       <Card
         className={cn(
           "cursor-pointer transition-all duration-200 hover:shadow-md",
@@ -52,34 +52,35 @@ function FailureNodeCard({ node, expanded, onToggle }: { node: FailureNode; expa
         )}
         onClick={onToggle}
       >
-        <CardHeader className="p-4 pb-2">
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-2">
-              <div className={cn("p-1.5 rounded-md", style.bg)}>
-                <NodeIcon className={cn("h-4 w-4", getSeverityColor())} />
+        <CardHeader className="p-3 pb-2">
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex items-start gap-2 min-w-0 flex-1">
+              <div className={cn("p-1.5 rounded-md shrink-0 mt-0.5", style.bg)}>
+                <NodeIcon className={cn("h-3.5 w-3.5", getSeverityColor())} />
               </div>
-              <div>
-                <div className="flex items-center gap-2">
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-1.5">
                   <Badge variant={colorMap[node.severity] || "secondary"} className="text-[10px] px-1.5 py-0">
                     {node.severity}
                   </Badge>
-                  {getStateBadge()}
+                  <Badge variant="outline" className="text-[10px] px-1.5 py-0">{style.label}</Badge>
+                  {node.state !== "unresolved" && getStateBadge()}
                 </div>
-                <CardTitle className="text-sm mt-1">{node.label}</CardTitle>
+                <CardTitle className="text-sm mt-1 leading-snug">{node.label}</CardTitle>
               </div>
             </div>
             {expanded ? (
-              <ChevronUp className="h-4 w-4 text-muted-foreground shrink-0" />
+              <ChevronUp className="h-4 w-4 text-muted-foreground shrink-0 mt-1" />
             ) : (
-              <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0" />
+              <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0 mt-1" />
             )}
           </div>
         </CardHeader>
         {expanded && (
-          <CardContent className="p-4 pt-2 animate-fade-in">
-            <p className="text-sm text-muted-foreground">{node.detail}</p>
+          <CardContent className="px-3 pb-3 pt-1 animate-fade-in">
+            <p className="text-xs text-muted-foreground leading-relaxed">{node.detail}</p>
             {node.linkedTo.length > 0 && (
-              <div className="mt-3 flex items-center gap-1 text-xs text-muted-foreground">
+              <div className="mt-2 flex items-center gap-1 text-xs text-muted-foreground">
                 <ArrowRight className="h-3 w-3" />
                 <span>Leads to: {node.linkedTo.join(", ")}</span>
               </div>
@@ -87,13 +88,6 @@ function FailureNodeCard({ node, expanded, onToggle }: { node: FailureNode; expa
           </CardContent>
         )}
       </Card>
-      {/* Connector line */}
-      {node.linkedTo.length > 0 && (
-        <div className="hidden md:flex absolute -bottom-4 left-1/2 -translate-x-1/2 z-10">
-          <div className="w-px h-4 bg-border" />
-          <ArrowRight className="h-3 w-3 text-muted-foreground absolute -right-3 top-1/2 -translate-y-1/2" />
-        </div>
-      )}
     </div>
   );
 }
@@ -102,7 +96,6 @@ export default function FailureChainRoom() {
   const navigate = useNavigate();
   const { state } = useSimulation();
   const { currentAnalysis, currentSimulation, isDemo } = state;
-
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
 
   if (!currentAnalysis || !currentSimulation) {
@@ -118,7 +111,7 @@ export default function FailureChainRoom() {
     );
   }
 
-  const { nodes } = currentAnalysis;
+  const { nodes, safeguards } = currentAnalysis;
 
   const toggleNode = (id: string) => {
     setExpandedNodes((prev) => {
@@ -129,25 +122,69 @@ export default function FailureChainRoom() {
     });
   };
 
-  // Group nodes by type for filtering
   const byType = (type: string) => nodes.filter((n) => n.type === type);
 
-  // Build connected chains
-  const buildChain = (startId: string, visited = new Set<string>()): FailureNode[] => {
+  // Build connected chains with depth tracking
+  const buildChain = (startId: string, visited = new Set<string>(), depth = 0): { node: FailureNode; depth: number }[] => {
     if (visited.has(startId)) return [];
     visited.add(startId);
     const node = nodes.find((n) => n.id === startId);
     if (!node) return [];
-    const chain = [node];
+    const result: { node: FailureNode; depth: number }[] = [{ node, depth }];
     for (const linkedId of node.linkedTo) {
-      chain.push(...buildChain(linkedId, visited));
+      result.push(...buildChain(linkedId, visited, depth + 1));
     }
-    return chain;
+    return result;
   };
 
-  const rootNodes = nodes.filter((n) =>
-    n.type === "assumption" || (n.type === "evidence-gap" && !nodes.some((x) => x.linkedTo.includes(n.id)))
-  );
+  // Find root nodes (assumptions and orphaned evidence gaps)
+  const rootNodes = useMemo(() => {
+    const hasParent = new Set<string>();
+    for (const n of nodes) {
+      for (const linked of n.linkedTo) {
+        hasParent.add(linked);
+      }
+    }
+    return nodes.filter((n) => !hasParent.has(n.id) && (n.type === "assumption" || n.type === "risk"));
+  }, [nodes]);
+
+  // Find the longest chain for "strongest chain" indicator
+  const longestChain = useMemo(() => {
+    let best: { node: FailureNode; depth: number }[] = [];
+    for (const root of rootNodes) {
+      const chain = buildChain(root.id);
+      if (chain.length > best.length) best = chain;
+    }
+    return best;
+  }, [rootNodes]);
+
+  // Map safeguards to their risk labels for traceability
+  const safeguardRiskMap = useMemo(() => {
+    const map = new Map<string, string>();
+    if (safeguards && nodes) {
+      for (const sg of safeguards) {
+        const riskNode = nodes.find((n) => n.id === sg.riskId);
+        if (riskNode) {
+          map.set(sg.id, riskNode.label);
+        }
+      }
+    }
+    return map;
+  }, [safeguards, nodes]);
+
+  // Safeguard nodes from the safeguards array (for the safeguards section)
+  const safeguardNodes = useMemo(() => {
+    if (!safeguards) return [];
+    return safeguards.map((sg, i) => ({
+      id: sg.id,
+      label: sg.title,
+      riskLabel: safeguardRiskMap.get(sg.id) || "Unknown risk",
+      effort: sg.effort,
+      impact: sg.impact,
+      accepted: sg.accepted,
+      notes: sg.notes,
+    }));
+  }, [safeguards, safeguardRiskMap]);
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -173,38 +210,53 @@ export default function FailureChainRoom() {
       <Separator />
 
       {/* Summary */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Chain Summary</CardTitle>
-          <CardDescription>
-            {nodes.length} nodes identified across {rootNodes.length} root causes
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+        <Card>
+          <CardContent className="py-3 text-center">
+            <div className="text-lg font-bold text-intel">{byType("assumption").length}</div>
+            <div className="text-xs text-muted-foreground">Assumptions</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="py-3 text-center">
+            <div className="text-lg font-bold text-revise">{byType("risk").length}</div>
+            <div className="text-xs text-muted-foreground">Risks</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="py-3 text-center">
+            <div className="text-lg font-bold text-stop">{byType("consequence").length}</div>
+            <div className="text-xs text-muted-foreground">Consequences</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="py-3 text-center">
+            <div className="text-lg font-bold text-go">{byType("safeguard").length}</div>
+            <div className="text-xs text-muted-foreground">Safeguards</div>
+          </CardContent>
+        </Card>
+        <Card className="col-span-2 md:col-span-1">
+          <CardContent className="py-3 text-center">
+            <div className="text-lg font-bold text-muted-foreground">{byType("evidence-gap").length}</div>
+            <div className="text-xs text-muted-foreground">Evidence Gaps</div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Strongest Chain */}
+      {longestChain.length > 1 && (
+        <Card className="border-primary/30 bg-primary/5">
+          <CardContent className="py-3 flex items-start gap-3">
+            <TrendingUp className="h-5 w-5 text-primary shrink-0 mt-0.5" />
             <div>
-              <div className="text-lg font-bold text-intel">{byType("assumption").length}</div>
-              <div className="text-xs text-muted-foreground">Assumptions</div>
+              <p className="text-sm font-semibold">Strongest Failure Chain</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                {longestChain.length} nodes from "{longestChain[0]?.node.label}" to "{longestChain[longestChain.length - 1]?.node.label}"
+              </p>
             </div>
-            <div>
-              <div className="text-lg font-bold text-revise">{byType("risk").length}</div>
-              <div className="text-xs text-muted-foreground">Risks</div>
-            </div>
-            <div>
-              <div className="text-lg font-bold text-stop">{byType("consequence").length}</div>
-              <div className="text-xs text-muted-foreground">Consequences</div>
-            </div>
-            <div>
-              <div className="text-lg font-bold text-go">{byType("safeguard").length}</div>
-              <div className="text-xs text-muted-foreground">Safeguards</div>
-            </div>
-            <div>
-              <div className="text-lg font-bold text-muted-foreground">{byType("evidence-gap").length}</div>
-              <div className="text-xs text-muted-foreground">Evidence Gaps</div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Failure Chains */}
       <div className="space-y-8">
@@ -212,16 +264,18 @@ export default function FailureChainRoom() {
           const chain = buildChain(root.id);
           return (
             <div key={root.id}>
-              <h3 className="text-sm font-semibold text-muted-foreground mb-3">
-                Chain starting from: {root.label}
+              <h3 className="text-sm font-semibold text-muted-foreground mb-3 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-intel" />
+                Chain: {root.label}
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                {chain.map((node) => (
+              <div className="space-y-2">
+                {chain.map(({ node, depth }) => (
                   <FailureNodeCard
                     key={node.id}
                     node={node}
                     expanded={expandedNodes.has(node.id)}
                     onToggle={() => toggleNode(node.id)}
+                    depth={depth}
                   />
                 ))}
               </div>
@@ -238,6 +292,41 @@ export default function FailureChainRoom() {
           </Card>
         )}
       </div>
+
+      {/* Personalized Safeguards */}
+      {safeguardNodes.length > 0 && (
+        <>
+          <Separator />
+          <div>
+            <h2 className="text-lg font-semibold mb-4">Personalized Safeguards</h2>
+            <div className="space-y-2">
+              {safeguardNodes.map((sg) => (
+                <Card key={sg.id} className={cn(sg.accepted && "border-go/30")}>
+                  <CardContent className="py-3 px-4">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <Lightbulb className="h-4 w-4 text-go shrink-0" />
+                          <span className="text-sm font-medium">{sg.label}</span>
+                          {sg.accepted && <Badge variant="go" className="text-[10px]">Accepted</Badge>}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Mitigates: <span className="text-foreground">{sg.riskLabel}</span>
+                        </p>
+                        <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
+                          <span>Effort: <span className="font-medium capitalize">{sg.effort}</span></span>
+                          <span>Impact: <span className="font-medium capitalize">{sg.impact}</span></span>
+                          {sg.notes && <span className="italic">— {sg.notes}</span>}
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Navigation */}
       <div className="flex justify-between">
