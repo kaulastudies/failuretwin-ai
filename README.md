@@ -155,3 +155,36 @@ npm run preview
 ## License
 
 MIT
+
+---
+
+## Project documentation
+
+FailureTwin AI maintains implementation, architecture, QA, security, judging, and submission documentation alongside the application source.
+
+| Document | Purpose |
+|---|---|
+| [Product Requirements](docs/PRODUCT_REQUIREMENTS.md) | Product scope, users, workflow and acceptance criteria |
+| [Architecture](docs/ARCHITECTURE.md) | Application architecture, live AI path and fallback boundary |
+| [AI Analysis Design](docs/AI_ANALYSIS_DESIGN.md) | AI reasoning requirements and normalized analysis contract |
+| [Failure Chain Model](docs/FAILURE_CHAIN_MODEL.md) | Causal failure-chain design |
+| [Scoring Model](docs/SCORING_MODEL.md) | Readiness and safeguard scoring behavior |
+| [Test Plan](docs/TEST_PLAN.md) | Regression and submission QA |
+| [Mentor Feedback](docs/MENTOR_FEEDBACK.md) | Mentor observations and resulting priorities |
+| [Judging Alignment](docs/JUDGING_ALIGNMENT.md) | Product evidence mapped to judging criteria |
+| [Demo Script](docs/DEMO_SCRIPT.md) | Final demo flow |
+| [Submission Checklist](docs/SUBMISSION_CHECKLIST.md) | Release and submission gates |
+| [Contributing](CONTRIBUTING.md) | Issue, branch, PR and review workflow |
+| [Security](SECURITY.md) | Secret and sensitive-data handling |
+
+## Team
+
+| Member | GitHub | Focus |
+|---|---|---|
+| Rama Chandra | [@kaulastudies](https://github.com/kaulastudies) | Product and Technical Lead, Native.Builder, architecture, integration and release |
+| Aigbe Godspower Voke | [@Gprexxy42](https://github.com/Gprexxy42) | Full-stack workflow, navigation/state QA and failure-chain UX |
+| Raff Fahrezi | [@CeriwitSawit](https://github.com/CeriwitSawit) | Management Plan, data/evidence workflow, Supabase review and security/privacy |
+| Amna Rauf | [@amna-rauf](https://github.com/amna-rauf) | QA, documentation, perspective differentiation and demo validation |
+| Muhammad Salman | [@SalmanDeveloperz](https://github.com/SalmanDeveloperz) | Live AI integration, backend/API path, analysis logic, scoring and state persistence |
+
+See [docs/TEAM.md](docs/TEAM.md) for the collaboration model and responsibility details.
