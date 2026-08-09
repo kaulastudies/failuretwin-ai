@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useSimulation } from "@/context/simulation-context";
-import { FallbackEngine } from "@/lib/analysis/fallback-engine";
+import { runAnalysis } from "@/lib/analysis/run-analysis";
 import { saveAnalysisData } from "@/lib/local-storage";
 import type { Simulation } from "@/lib/analysis/types";
 
@@ -94,7 +94,7 @@ export default function FollowUpRoom() {
     setAnswers((prev) => ({ ...prev, [id]: value }));
   };
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     setAnalyzing(true);
 
     // Merge answers back into simulation
@@ -111,19 +111,23 @@ export default function FollowUpRoom() {
 
     dispatch({ type: "UPDATE_SIMULATION", simulation: updatedSim });
 
-    // Run analysis
-    setTimeout(() => {
-      const engine = new FallbackEngine();
-      const result = engine.analyze(updatedSim);
-      saveAnalysisData(updatedSim.id, result);
-      dispatch({ type: "SET_ANALYSIS", analysis: result });
-
-      // Update simulation status
+    try {
       const completedSim: Simulation = { ...updatedSim, status: "complete" };
+      const result = await runAnalysis(completedSim);
+      const completedAnalysis = {
+        ...result,
+        simulation: completedSim,
+      };
+
+      saveAnalysisData(completedSim.id, completedAnalysis);
+      dispatch({ type: "SET_ANALYSIS", analysis: completedAnalysis });
       dispatch({ type: "UPDATE_SIMULATION", simulation: completedSim });
 
       navigate("/analysis");
-    }, 1500);
+    } catch (error) {
+      console.error("Analysis flow failed", error);
+      setAnalyzing(false);
+    }
   };
 
   if (analyzing) {
