@@ -3,7 +3,11 @@ import { normalizeAnalysisResult } from "../normalize";
 import type { Simulation, AnalysisResult, AnalysisEngine } from "./types";
 
 export class LiveAIEngine implements AnalysisEngine {
-  constructor(private endpoint = "/api/analyze") {}
+  private endpoint: string;
+
+  constructor(endpoint = "/api/analyze") {
+    this.endpoint = endpoint;
+  }
 
   async analyze(simulation: Simulation): Promise<AnalysisResult> {
     try {
