@@ -1,4 +1,6 @@
-﻿# AI Analysis Design
+# AI Analysis Design
+> **Contract status:** This document describes FailureTwin's target/normalized AI analysis contract. The concrete runtime TypeScript shape in `src/lib/analysis/types.ts` is the source of truth for the current implementation.
+
 
 ## Goal
 Produce genuinely model-driven, plan-specific, explainable analysis while preserving a stable UI contract.
