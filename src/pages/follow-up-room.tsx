@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useSimulation } from "@/context/simulation-context";
-import { FallbackEngine } from "@/lib/analysis/fallback-engine";
+import { LiveAIEngine } from "@/lib/analysis/live-engine";
 import { saveAnalysisData } from "@/lib/local-storage";
 import { cn } from "@/lib/utils";
 import type { Simulation } from "@/lib/analysis/types";
@@ -171,7 +171,7 @@ export default function ManagementPlanRoom() {
     }));
   };
 
-  const handleRunAnalysis = () => {
+  const handleRunAnalysis = async () => {
     setAnalyzing(true);
     clearDraft();
 
@@ -201,10 +201,11 @@ export default function ManagementPlanRoom() {
 
     dispatch({ type: "UPDATE_SIMULATION", simulation: updatedSim });
 
-    // Run analysis
-    setTimeout(() => {
-      const engine = new FallbackEngine();
-      const result = engine.analyze(updatedSim);
+    // Run analysis — LiveAIEngine tries POST /api/analyze,
+    // and falls back to the deterministic FallbackEngine on failure.
+    try {
+      const engine = new LiveAIEngine();
+      const result = await engine.analyze(updatedSim);
       saveAnalysisData(updatedSim.id, result);
       dispatch({ type: "SET_ANALYSIS", analysis: result });
 
@@ -212,7 +213,10 @@ export default function ManagementPlanRoom() {
       dispatch({ type: "UPDATE_SIMULATION", simulation: completedSim });
 
       navigate("/analysis");
-    }, 1500);
+    } catch (err) {
+      console.error("Analysis failed unrecoverably:", err);
+      setAnalyzing(false);
+    }
   };
 
   if (analyzing) {
