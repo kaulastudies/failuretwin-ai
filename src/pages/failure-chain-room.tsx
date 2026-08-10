@@ -98,20 +98,9 @@ export default function FailureChainRoom() {
   const { currentAnalysis, currentSimulation, isDemo } = state;
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
 
-  if (!currentAnalysis || !currentSimulation) {
-    return (
-      <div className="flex flex-col items-center justify-center py-20 animate-fade-in">
-        <HelpCircle className="h-12 w-12 text-muted-foreground/40 mb-4" />
-        <h2 className="text-xl font-semibold mb-2">No analysis data</h2>
-        <p className="text-muted-foreground mb-6">
-          Complete an analysis first to see failure chains.
-        </p>
-        <Button onClick={() => navigate("/")}>Back to Dashboard</Button>
-      </div>
-    );
-  }
-
-  const { nodes, safeguards } = currentAnalysis;
+  // Compute these unconditionally so hook count stays stable
+  const nodes = currentAnalysis?.nodes ?? [];
+  const safeguards = currentAnalysis?.safeguards ?? [];
 
   const toggleNode = (id: string) => {
     setExpandedNodes((prev) => {
@@ -185,6 +174,19 @@ export default function FailureChainRoom() {
       notes: sg.notes,
     }));
   }, [safeguards, safeguardRiskMap]);
+
+  if (!currentAnalysis || !currentSimulation) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 animate-fade-in">
+        <HelpCircle className="h-12 w-12 text-muted-foreground/40 mb-4" />
+        <h2 className="text-xl font-semibold mb-2">No analysis data</h2>
+        <p className="text-muted-foreground mb-6">
+          Complete an analysis first to see failure chains.
+        </p>
+        <Button onClick={() => navigate("/")}>Back to Dashboard</Button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-fade-in">
